@@ -5,9 +5,9 @@ import { ShoppingListItem } from "./components/ShoppingListItem";
 export default function App() {
   return (
     <View style={styles.containter}>
-      <ShoppingListItem name="Coffee" />
-      <ShoppingListItem name="Tea" />
-      <ShoppingListItem name="Milk" />
+      <ShoppingListItem name="Coffee"/>
+      <ShoppingListItem name="Tea" isCompleted />
+      <ShoppingListItem name="Milk" isCompleted={true}/>
     </View>
   );
 }
