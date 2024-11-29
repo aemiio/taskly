@@ -4,7 +4,7 @@ import { ShoppingListItem } from "./components/ShoppingListItem";
 
 export default function App() {
   return (
-    <View style={styles.containter}>
+    <View style={styles.container}>
       <ShoppingListItem name="Coffee"/>
       <ShoppingListItem name="Tea" isCompleted />
       <ShoppingListItem name="Milk" isCompleted={true}/>
@@ -12,7 +12,7 @@ export default function App() {
   );
 }
 const styles = StyleSheet.create({
-  containter: {
+  container: {
     flex: 1, // Makes the container take the full screen height
     backgroundColor: theme.colorWhite,
     flexDirection: "column",
