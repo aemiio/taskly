@@ -1,0 +1,5 @@
+node.js
+android sdk
+expo go
+eslint
+prettier
