@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
-import { theme } from "./theme";
-import { ListItem } from "./components/screen1";
+import { theme } from "../theme";
+import { ListItem } from "../components/screen1";
 
 export default function App() {
   return (
