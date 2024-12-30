@@ -1,6 +1,15 @@
 node.js
 android sdk
 expo go
+
 eslint
 prettier
+
 @expo/vector-icons
+
+expo-router 
+react-native-safe-area-context 
+react-native-screens 
+expo-linking 
+expo-constants 
+expo-status-bar

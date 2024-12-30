@@ -22,7 +22,7 @@ export function ListItem({ name, isCompleted }: Props) {
           text: "Cancel",
           style: "cancel",
         },
-      ]
+      ],
     );
   };
 
