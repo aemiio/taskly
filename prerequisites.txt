@@ -3,3 +3,4 @@ android sdk
 expo go
 eslint
 prettier
+@expo/vector-icons

@@ -1,5 +1,6 @@
 import { StyleSheet, TouchableOpacity, View, Alert, Text } from "react-native";
 import { theme } from "../theme";
+import Entypo from "@expo/vector-icons/Entypo";
 
 type Props = {
   name: string;
@@ -32,23 +33,32 @@ export function ListItem({ name, isCompleted }: Props) {
         isCompleted ? styles.completedContainer : undefined,
       ]}
     >
-      <Text
-        style={[
-          styles.itemText,
-          isCompleted ? styles.completedText : undefined,
-        ]}
-      >
-        {name}
-      </Text>
+      <View style={styles.row}>
+        <Entypo
+          name={isCompleted ? "check" : "circle"}
+          size={24}
+          color={isCompleted ? theme.colorGrey : theme.colorCerulean}
+        />
+        <Text
+          style={[
+            styles.itemText,
+            isCompleted ? styles.completedText : undefined,
+          ]}
+        >
+          {name}
+        </Text>
+      </View>
       <TouchableOpacity
+        hitSlop={20}
         onPress={handleDelete}
-        style={[
-          styles.button,
-          isCompleted ? styles.completedButton : undefined,
-        ]}
+        style={styles.button}
         activeOpacity={0.8}
       >
-        <Text style={styles.buttonText}> Delete </Text>
+        <Entypo
+          name={"circle-with-cross"}
+          color={isCompleted ? theme.colorGrey : theme.colorRed}
+          size={24}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -67,17 +77,11 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: 18,
     fontWeight: "200",
+    marginLeft: 8,
+    flex: 1,
   },
   button: {
-    backgroundColor: theme.colorBlack,
     padding: 8,
-    borderRadius: 6,
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    textTransform: "uppercase",
-    letterSpacing: 1,
   },
   completedContainer: {
     backgroundColor: theme.colorLightGrey,
@@ -88,7 +92,9 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
     textDecorationColor: theme.colorGrey,
   },
-  completedButton: {
-    backgroundColor: theme.colorGrey,
+  row: {
+    flexDirection: "row",
+    flex: 1,
+    alignItems: "center",
   },
 });
