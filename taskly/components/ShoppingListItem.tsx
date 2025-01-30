@@ -16,6 +16,11 @@ export function ShoppingListItem({
   isCompleted,
   onDelete,
   onToggleComplete,
+}: {
+  name: string;
+  isCompleted: boolean;
+  onDelete: () => void;
+  onToggleComplete: () => void;
 }) {
   const handleDelete = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
