@@ -1,37 +1,45 @@
-import { StyleSheet, TouchableOpacity, View, Alert, Text } from "react-native";
-import { theme } from "../theme";
+import {
+  TouchableOpacity,
+  View,
+  Alert,
+  StyleSheet,
+  Text,
+  Pressable,
+} from "react-native";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";
+import { theme } from "../theme";
+import * as Haptics from "expo-haptics";
 
-type Props = {
-  name: string;
-  isCompleted: boolean;
-};
-
-export function ListItem({ name, isCompleted }: Props) {
+export function ShoppingListItem({
+  name,
+  isCompleted,
+  onDelete,
+  onToggleComplete,
+}) {
   const handleDelete = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Alert.alert(
       `Are you sure you want to delete ${name}?`,
       "It will be gone for good",
       [
         {
           text: "Yes",
-          onPress: () => console.log("Ok, deleting."),
+          onPress: () => onDelete(),
           style: "destructive",
         },
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-      ],
+        { text: "Cancel", style: "cancel" },
+      ]
     );
   };
 
   return (
-    <View
+    <Pressable
       style={[
         styles.itemContainer,
         isCompleted ? styles.completedContainer : undefined,
       ]}
+      onPress={onToggleComplete}
     >
       <View style={styles.row}>
         <Entypo
@@ -48,26 +56,21 @@ export function ListItem({ name, isCompleted }: Props) {
           {name}
         </Text>
       </View>
-      <TouchableOpacity
-        hitSlop={20}
-        onPress={handleDelete}
-        style={styles.button}
-        activeOpacity={0.8}
-      >
-        <Entypo
-          name={"circle-with-cross"}
-          color={isCompleted ? theme.colorGrey : theme.colorRed}
+      <TouchableOpacity hitSlop={20} onPress={handleDelete}>
+        <AntDesign
+          name="closecircle"
           size={24}
+          color={isCompleted ? theme.colorGrey : theme.colorRed}
         />
       </TouchableOpacity>
-    </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   itemContainer: {
     paddingVertical: 16,
-    paddingHorizontal: 8,
+    paddingHorizontal: 18,
     borderBottomColor: theme.colorCerulean,
     borderBottomWidth: 1,
     flexDirection: "row",
@@ -79,9 +82,6 @@ const styles = StyleSheet.create({
     fontWeight: "200",
     marginLeft: 8,
     flex: 1,
-  },
-  button: {
-    padding: 8,
   },
   completedContainer: {
     backgroundColor: theme.colorLightGrey,
