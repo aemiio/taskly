@@ -34,7 +34,7 @@ export function ShoppingListItem({
           style: "destructive",
         },
         { text: "Cancel", style: "cancel" },
-      ]
+      ],
     );
   };
 
