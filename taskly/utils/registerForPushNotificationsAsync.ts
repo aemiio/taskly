@@ -13,17 +13,16 @@ export async function registerForPushNotificationsAsync() {
     });
   }
 
-  if (Device.isDevice) {
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    if (existingStatus !== "granted") {
-      // request permission if not granted
-      const { status } = await Notifications.requestPermissionsAsync();
-      return status;
-    } else {
-      return existingStatus;
-    }
+  // if (Device.isDevice) {
+  const { status: existingStatus } = await Notifications.getPermissionsAsync();
+  if (existingStatus !== "granted") {
+    // request permission if not granted
+    const { status } = await Notifications.requestPermissionsAsync();
+    return status;
   } else {
-    return null;
+    return existingStatus;
   }
+  // } else {
+  //   return null;
+  // }
 }
