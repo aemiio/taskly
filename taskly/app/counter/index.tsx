@@ -11,7 +11,11 @@ export default function CounterScreen() {
         content: {
           title: "I'm a notification from your app! 📨",
         },
-        trigger: { seconds: 5 },
+        trigger: {
+          seconds: 5,
+          repeats: false,
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        },
       });
     } else {
       Alert.alert(
