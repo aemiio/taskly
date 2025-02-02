@@ -1,26 +1,49 @@
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { theme } from "../../theme";
-// import { registerForPushNotificationsAsync } from "../../utils/registerForPushNotificationsAsync";
-// import * as Notifications from "expo-notifications";
+import { registerForPushNotificationsAsync } from "../../utils/registerForPushNotificationsAsync";
+import * as Notifications from "expo-notifications";
 import { useEffect, useState } from "react";
 import { intervalToDuration, isBefore } from "date-fns";
 import { TimeSegment } from "../../components/TimeSegment";
+import { getFromStorage, saveToStorage } from "../../utils/storage";
 
-// 10 seconds from now
-const timestamp = Date.now() + 10 * 1000;
+// 10 seconds in ms
+const frequency = 10 * 1000;
+
+const countdownStorageKey = "taskly-countdown";
+
+type PersistedCountdownState = {
+  currentNotificationId: string | undefined;
+  completedAtTimestamps: number[];
+};
 
 type CountdownStatus = {
   isOverdue: boolean;
   distance: ReturnType<typeof intervalToDuration>;
 };
 export default function CounterScreen() {
+  const [countdownState, setCountdownState] =
+    useState<PersistedCountdownState>();
   const [status, setStatus] = useState<CountdownStatus>({
     isOverdue: false,
     distance: {},
   });
 
   useEffect(() => {
+    const init = async () => {
+      const value = await getFromStorage(countdownStorageKey);
+      setCountdownState(value);
+    };
+    init();
+  }, []);
+
+  const lastCompletedAt = countdownState?.completedAtTimestamps[0];
+
+  useEffect(() => {
     const intervalID = setInterval(() => {
+      const timestamp = lastCompletedAt
+        ? lastCompletedAt + frequency
+        : Date.now();
       const isOverdue = isBefore(timestamp, Date.now());
 
       const distance = intervalToDuration(
@@ -35,28 +58,47 @@ export default function CounterScreen() {
     return () => {
       clearInterval(intervalID);
     };
-  }, []);
+  }, [lastCompletedAt]);
 
-  // const scheduleNotification = async () => {
-  //   const result = await registerForPushNotificationsAsync();
-  //   if (result === "granted") {
-  //     await Notifications.scheduleNotificationAsync({
-  //       content: {
-  //         title: "I'm a notification from your app! 📨",
-  //       },
-  //       trigger: {
-  //         seconds: 5,
-  //         repeats: false,
-  //         type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-  //       },
-  //     });
-  //   } else {
-  //     Alert.alert(
-  //       "Unable to schedule notificcations",
-  //       "Enable the notificaion permission for Expo Go in settings."
-  //     );
-  //   }
-  // };
+  const scheduleNotification = async () => {
+    let pushNotificationId;
+
+    const result = await registerForPushNotificationsAsync();
+    if (result === "granted") {
+      pushNotificationId = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "The thing is due!",
+        },
+        trigger: {
+          seconds: frequency / 1000,
+          repeats: false,
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        },
+      });
+    } else {
+      Alert.alert(
+        "Unable to schedule notificcations",
+        "Enable the notificaion permission for Expo Go in settings.",
+      );
+    }
+
+    if (countdownState?.currentNotificationId) {
+      await Notifications.cancelScheduledNotificationAsync(
+        countdownState.currentNotificationId,
+      );
+    }
+
+    const newCountdownState: PersistedCountdownState = {
+      currentNotificationId: pushNotificationId,
+      completedAtTimestamps: countdownState
+        ? [Date.now(), ...countdownState.completedAtTimestamps]
+        : [Date.now()],
+    };
+
+    setCountdownState(newCountdownState);
+
+    await saveToStorage(countdownStorageKey, newCountdownState);
+  };
   return (
     <View
       style={[
@@ -95,7 +137,7 @@ export default function CounterScreen() {
         ></TimeSegment>
       </View>
       <TouchableOpacity
-        // onPress={scheduleNotification}
+        onPress={scheduleNotification}
         style={styles.button}
         activeOpacity={0.8}
       >
