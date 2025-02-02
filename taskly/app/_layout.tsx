@@ -26,9 +26,10 @@ export default function Layout() {
         }}
       />
       <Tabs.Screen
-        name="idea"
+        name="notes"
         options={{
-          title: "Idea",
+          title: "Notes",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => {
             return <AntDesign name="bulb1" size={size} color={color} />;
           },
