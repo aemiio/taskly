@@ -59,7 +59,7 @@ export default function CounterScreen() {
       const distance = intervalToDuration(
         isOverdue
           ? { end: Date.now(), start: timestamp }
-          : { start: Date.now(), end: timestamp }
+          : { start: Date.now(), end: timestamp },
       );
 
       setStatus({ isOverdue, distance });
@@ -90,13 +90,13 @@ export default function CounterScreen() {
     } else {
       Alert.alert(
         "Unable to schedule notificcations",
-        "Enable the notificaion permission for Expo Go in settings."
+        "Enable the notificaion permission for Expo Go in settings.",
       );
     }
 
     if (countdownState?.currentNotificationId) {
       await Notifications.cancelScheduledNotificationAsync(
-        countdownState.currentNotificationId
+        countdownState.currentNotificationId,
       );
     }
 
