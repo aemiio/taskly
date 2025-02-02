@@ -1,14 +1,23 @@
-import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Dimensions,
+} from "react-native";
 import { theme } from "../../theme";
 import { registerForPushNotificationsAsync } from "../../utils/registerForPushNotificationsAsync";
 import * as Notifications from "expo-notifications";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { intervalToDuration, isBefore } from "date-fns";
 import { TimeSegment } from "../../components/TimeSegment";
 import { getFromStorage, saveToStorage } from "../../utils/storage";
+import * as Haptics from "expo-haptics";
+import ConfettiCannon from "react-native-confetti-cannon";
 
-// 10 seconds in ms
-const frequency = 10 * 1000;
+// 2 weeks in ms
+const frequency = 14 * 24 * 60 * 60 * 1000;
 
 export const countdownStorageKey = "taskly-countdown";
 
@@ -22,6 +31,7 @@ type CountdownStatus = {
   distance: ReturnType<typeof intervalToDuration>;
 };
 export default function CounterScreen() {
+  const confettiRef = useRef<any>();
   const [countdownState, setCountdownState] =
     useState<PersistedCountdownState>();
   const [status, setStatus] = useState<CountdownStatus>({
@@ -49,7 +59,7 @@ export default function CounterScreen() {
       const distance = intervalToDuration(
         isOverdue
           ? { end: Date.now(), start: timestamp }
-          : { start: Date.now(), end: timestamp },
+          : { start: Date.now(), end: timestamp }
       );
 
       setStatus({ isOverdue, distance });
@@ -61,13 +71,15 @@ export default function CounterScreen() {
   }, [lastCompletedAt]);
 
   const scheduleNotification = async () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    confettiRef?.current?.start();
     let pushNotificationId;
 
     const result = await registerForPushNotificationsAsync();
     if (result === "granted") {
       pushNotificationId = await Notifications.scheduleNotificationAsync({
         content: {
-          title: "The thing is due!",
+          title: "Cleaning overdue!",
         },
         trigger: {
           seconds: frequency / 1000,
@@ -78,13 +90,13 @@ export default function CounterScreen() {
     } else {
       Alert.alert(
         "Unable to schedule notificcations",
-        "Enable the notificaion permission for Expo Go in settings.",
+        "Enable the notificaion permission for Expo Go in settings."
       );
     }
 
     if (countdownState?.currentNotificationId) {
       await Notifications.cancelScheduledNotificationAsync(
-        countdownState.currentNotificationId,
+        countdownState.currentNotificationId
       );
     }
 
@@ -107,11 +119,11 @@ export default function CounterScreen() {
       ]}
     >
       {!status.isOverdue ? (
-        <Text style={[styles.heading]}> Thing due in</Text>
+        <Text style={[styles.heading]}> Next cleaning due in</Text>
       ) : (
         <Text style={[styles.heading, styles.whiteText]}>
           {" "}
-          Thing overdue by
+          Cleaning overdue by
         </Text>
       )}
       <View style={styles.row}>
@@ -141,8 +153,15 @@ export default function CounterScreen() {
         style={styles.button}
         activeOpacity={0.8}
       >
-        <Text style={styles.buttonText}>I've done the thing!</Text>
+        <Text style={styles.buttonText}>I've cleaned the pc!</Text>
       </TouchableOpacity>
+      <ConfettiCannon
+        ref={confettiRef}
+        count={50}
+        origin={{ x: Dimensions.get("window").width / 2, y: -39 }}
+        autoStart={false}
+        fadeOut={true}
+      ></ConfettiCannon>
     </View>
   );
 }
