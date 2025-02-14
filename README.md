@@ -1,6 +1,6 @@
 # Taskly 📝
 
-A simple task management app built with **React Native**, **TypeScript**, and **Expo**. Taskly allows users to **list items, add notes, set reminders, and schedule recurring reminders**.
+A simple task management app built with **React Native**, **TypeScript**, and **Expo**.
 
 ## 🚀 Features
 - ✅ Add, edit, and delete tasks
@@ -13,14 +13,3 @@ A simple task management app built with **React Native**, **TypeScript**, and **
 - **TypeScript**
 - **Expo** 
 
-## 📦 Installation
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/yourusername/taskly.git
-   cd taskly 
-2. Install dependencies:
-   ```sh
-   npm install
-3. Start the app:
-   ```sh
-   npm run start
